@@ -11,9 +11,9 @@ public class Plane : MonoBehaviour {
     public float screenSize;
     public float padding = 0.75f;
 
+    public GameObject leftmost;
 
-	// Use this for initialization
-	void Start () {
+	private void Start () {
         screenSize = Camera.main.orthographicSize - padding;
         CreateSet();
 	}
@@ -22,12 +22,29 @@ public class Plane : MonoBehaviour {
         set = new List<GameObject>();
 
         for (int i = 0; i < numberOfPoints; i++) {
-            Instantiate(pointPrefab, new Vector3(Random.Range(-screenSize, screenSize), Random.Range(-screenSize, screenSize), 0f), Quaternion.identity, this.transform);
+            set.Add(Instantiate(pointPrefab, new Vector3(Random.Range(-screenSize, screenSize), Random.Range(-screenSize, screenSize), 0f), Quaternion.identity, this.transform));
         }
     }
 
-    // Update is called once per frame
-    void Update () {
-		
-	}
+    private void Update() {
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            GiftWrap();
+        }
+    }
+
+    private void GiftWrap() {
+        FindLeftmostPoint();
+    }
+
+    private void FindLeftmostPoint() {
+        leftmost = set[0];
+
+        foreach (GameObject point in set){
+            if (point.transform.position.x < leftmost.transform.position.x) {
+                leftmost = point;
+             }
+        }
+
+        leftmost.GetComponent<MeshRenderer>().material.color = Color.green;
+    }
 }
